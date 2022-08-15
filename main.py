@@ -43,10 +43,16 @@ if __name__ == '__main__':
         habit_data = Habit(name, description, priority, period)
         Habit.create_habits(habit_data)
 
+    # if navigation == "Delete existing habits":
+    #     print(data.get_habits())
+    #     habit_to_delete = questionary.text("Type habit to delete: ").ask()
+    #     data.remove_habit(habit_to_delete)
+
     if navigation == "Delete existing habits":
-        print(data.get_habits())
-        habit_to_delete = questionary.text("Type habit to delete: ").ask()
-        data.remove_habit(habit_to_delete)
+        habit_to_delete = data.select_habit()
+        choice = questionary.confirm("Are you sure?").ask()
+        if choice == "Yes":
+                data.remove_habit(habit_to_delete)
 
 
 

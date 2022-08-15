@@ -1,6 +1,8 @@
 import sqlite3
 from datetime import date
 
+import questionary
+
 conn = sqlite3.connect("test.db")
 cursor = conn.cursor()
 
@@ -40,11 +42,17 @@ def remove_habit(habit_name):
     with conn:
         cursor.execute(f"DELETE FROM habits WHERE name == '{habit_name}'; ")
 
+# def get_habits():
+#     with conn:
+#          cursor.execute("SELECT name FROM habits")
+#          habit_names = cursor.fetchall()
+#          return habit_names
+
 def get_habits():
     with conn:
          cursor.execute("SELECT name FROM habits")
          habit_names = cursor.fetchall()
-         return habit_names
+         return [i[0] for i in set(habit_names)]
 
 
 def update_habits_records(name, description, period, checked, streak):
@@ -53,6 +61,13 @@ def update_habits_records(name, description, period, checked, streak):
              "INSERT INTO habits_records VALUES (?, ?, ?, ?, ?)",
               (name, description, period, checked, streak))
 
+def select_habit():
+    habits_list = get_habits()
+    if habits_list is not None:
+        return questionary.select("Select a habit:",
+                                  choices=sorted(habits_list)).ask().lower()
+    else:
+        raise ValueError("No habits found")
 
 
 
