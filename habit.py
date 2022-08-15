@@ -7,22 +7,15 @@ import data
 
 class Habit:
 
-#    def __int__(self, name, description, priority, period):
-#        self.name = name
-#        self.description = description
-#        self.priority = priority
-#        self.period = period
-#        self.startdate = datetime.now()
 
-
-    def __init__(self, name, description, priority, period):
+    def __init__(self, name, description, priority, period ):
 
         self.name = name
         self.description = description
         self.priority = priority
-        self.data = sqlite3.connect("test.db")
         self.period = period
-        self.startdate = datetime.now().strftime("%m/%d/%Y %H:%M")
+        self.startdate = datetime.now()
+        self.data = sqlite3.connect("test.db")
 
     def create_habits(self):
 

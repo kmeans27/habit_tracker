@@ -1,5 +1,9 @@
 
+import habit
 from habit import Habit
+
+
+
 import questionary
 from datetime import datetime
 
@@ -9,6 +13,10 @@ print("Hello! This APP aims to improve your efficiency and "
 
 
 if __name__ == '__main__':
+    # molsou = Habit("justtest", "this is the description", "B", 2)
+    # Habit.create_habits(molsou)
+
+
     navigation = questionary.select("Select one of the following:",
                                     choices=[
                                         "Check of existing habits",
@@ -28,13 +36,12 @@ if __name__ == '__main__':
             pass
 
     if navigation == "Create new habits":
-        name = questionary.text("Habit name: ")
-        description = questionary.text("Habit description: ")
-        priority = questionary.text("Habit priority: ")
-        period = questionary.text("Habit period: ")
-        habit = Habit(name, description, priority, period)
-        habit.create_habits()
-
+        name = questionary.text("Habit name: ").ask()
+        description = questionary.text("Habit description: ").ask()
+        priority = questionary.text("Habit priority: ").ask()
+        period = questionary.text("Habit period: ").ask()
+        habit_data = Habit(name, description, priority, period)
+        Habit.create_habits(habit_data)
 
 
 
