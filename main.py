@@ -1,4 +1,4 @@
-
+import data
 import habit
 from habit import Habit
 
@@ -17,6 +17,7 @@ if __name__ == '__main__':
     # Habit.create_habits(molsou)
 
 
+
     navigation = questionary.select("Select one of the following:",
                                     choices=[
                                         "Check of existing habits",
@@ -28,12 +29,11 @@ if __name__ == '__main__':
                                         "Exit the application"
                                     ]).ask()
 
+
     if navigation == "Exit the application":
         choice = questionary.confirm("Are you sure?").ask()
         if choice == "Yes":
-            exit()
-        else:
-            pass
+                exit()
 
     if navigation == "Create new habits":
         name = questionary.text("Habit name: ").ask()
@@ -42,6 +42,11 @@ if __name__ == '__main__':
         period = questionary.text("Habit period: ").ask()
         habit_data = Habit(name, description, priority, period)
         Habit.create_habits(habit_data)
+
+    if navigation == "Delete existing habits":
+        print(data.get_habits())
+        habit_to_delete = questionary.text("Type habit to delete: ").ask()
+        data.remove_habit(habit_to_delete)
 
 
 

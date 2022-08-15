@@ -40,6 +40,12 @@ def remove_habit(habit_name):
     with conn:
         cursor.execute(f"DELETE FROM habits WHERE name == '{habit_name}'; ")
 
+def get_habits():
+    with conn:
+         cursor.execute("SELECT name FROM habits")
+         habit_names = cursor.fetchall()
+         return habit_names
+
 
 def update_habits_records(name, description, period, checked, streak):
     with conn:
