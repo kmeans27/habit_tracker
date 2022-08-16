@@ -12,6 +12,7 @@ print("Hello! This APP aims to improve your efficiency and "
 
 
 
+
 if __name__ == '__main__':
     # molsou = Habit("justtest", "this is the description", "B", 2)
     # Habit.create_habits(molsou)
@@ -20,7 +21,7 @@ if __name__ == '__main__':
 
     navigation = questionary.select("Select one of the following:",
                                     choices=[
-                                        "Check of existing habits",
+                                        "Check off existing habits",
                                         "Create new habits",
                                         "Modify existing habits",
                                         "Delete existing habits",
@@ -53,6 +54,12 @@ if __name__ == '__main__':
         choice = questionary.confirm("Are you sure?").ask()
         if choice == "Yes":
                 data.remove_habit(habit_to_delete)
+
+    if navigation == "Check off existing habits":
+        habit_to_check = data.select_habit()
+        choice = questionary.confirm("Are you sure?").ask()
+        if choice == "Yes":
+                data.complete_functionality(habit_to_check)
 
 
 
