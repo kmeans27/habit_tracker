@@ -32,7 +32,7 @@ if __name__ == '__main__':
         name = questionary.text("Habit name: ").ask().lower()
         description = questionary.text("Habit description: ").ask().lower()
         priority = questionary.text("Habit priority: ").ask().lower()
-        period = questionary.select("Habit Period: ", choices=["Daily", "Weekly"]).ask().lower()
+        period = questionary.select("Habit Period: ", choices=["daily", "weekly"]).ask().lower()
         habit_data = Habit(name, description, priority, period)
         Habit.create_habits(habit_data)
 
@@ -50,7 +50,9 @@ if __name__ == '__main__':
             Habit.remove_habits(habit_to_delete)
 
     if navigation == "Check off existing habits":
-        habit_to_check = data.select_habit()
+        habit_to_check_off = data.select_habit()
         choice = questionary.confirm("Are you sure?").ask()
         if choice == "Yes":
-            pass
+            habit_data = Habit(habit_to_check_off)
+            Habit.completed(habit_data)
+
