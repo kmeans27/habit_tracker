@@ -94,3 +94,4 @@ def update_streak(habit_name, streak, completed=None):
                        (streak, completed, habit_name))
 
 
+#remove_habit("now")
