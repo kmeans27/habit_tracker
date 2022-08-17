@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime
 
 import questionary
-
+global file
 conn = sqlite3.connect("test6.db")
 cursor = conn.cursor()
 

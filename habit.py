@@ -18,7 +18,6 @@ class Habit:
         self.completed = None
         self.checked = 0
         self.streak = 0
-        self.data = sqlite3.connect("test.db")
 
     def create_habits(self):
         data.add_habit(self.name, self.description, self.priority, self.period, self.startdate)
