@@ -2,16 +2,17 @@ import datetime
 import sqlite3
 from datetime import datetime
 
+
 import questionary
 
-conn = sqlite3.connect("test3.db")
+conn = sqlite3.connect("test5.db")
 cursor = conn.cursor()
 
 def create_table():
     with conn:
         cursor.execute("""
                 CREATE TABLE IF NOT EXISTS habits (
-                    name text PRIMARY KEY,
+                    name text,
                     description text,
                     priority char,
                     period int,
@@ -20,7 +21,7 @@ def create_table():
 
     with conn:
         cursor.execute("""
-                CREATE TABLE IF NOT EXISTS habits_records (
+                CREATE TABLE IF NOT EXISTS events (
                     name text,
                     description text,
                     period int,
@@ -43,7 +44,13 @@ def add_habit(name, description, priority, period, startdate):
 
 def remove_habit(habit_name):
     with conn:
-        cursor.execute(f"DELETE FROM habits WHERE name == '{habit_name}'; ")
+        cursor.execute(f"DELETE FROM habits WHERE name = '{habit_name}'; ")
+
+
+def remove_event(habit_name):
+    with conn:
+        cursor.execute(f"DELETE FROM events WHERE name = '{habit_name}';")
+
 
 # def get_habits():
 #     with conn:
@@ -58,10 +65,10 @@ def get_habits():
          return [i[0] for i in set(habit_names)]
 
 
-def update_habits_records(name, description, period, last_completed, due, checked, streak):
+def update_events(name, description, period, last_completed, due, checked, streak):
     with conn:
          cursor.execute(
-             "INSERT INTO habits_records VALUES (?, ?, ?, ?, ?, ?, ?)",
+             "INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?)",
               (name, description, period, last_completed, due, checked, streak))
 
 def select_habit():
@@ -78,18 +85,12 @@ def select_habit():
 #         checked_due_data = cursor.fetchall()
 #         return [i[0] for i in set(checked_due_data)]
 
-def complete_functionality(habit_name):
-    last_completed = datetime.now()
-    due = datetime.now() + datetime.timedelta(days=2)
-    name = habit_name
-    with conn:
-    #     cursor.execute("SELECT name, period FROM habits WHERE name = ?", name = habit_name)
-    #     data = cursor.fetchall()
-    #     print(data)
-
-        cursor.execute("UPDATE habits_records SET last_completed = ?, due = ?, checked = FALSE "
-                       "WHERE name = ?",
-                       (last_completed, due, name))
+# def complete_functionality(habit_name):
+    # with conn:
+        # cursor.execute(f"SELECT description FROM events WHERE name == '{habit_name}'")
+        # description = cursor.fetchone()
+        # cursor.execute("INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?)",
+        #                (habit_name, description, period, True, 1, None, datetime.now().strftime("%d/%m/%y")))
 
 
 
