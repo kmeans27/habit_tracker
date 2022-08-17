@@ -29,10 +29,10 @@ if __name__ == '__main__':
             exit()
 
     if navigation == "Create new habits":
-        name = questionary.text("Habit name: ").ask()
-        description = questionary.text("Habit description: ").ask()
-        priority = questionary.text("Habit priority: ").ask()
-        period = questionary.text("Habit period: ").ask()
+        name = questionary.text("Habit name: ").ask().lower()
+        description = questionary.text("Habit description: ").ask().lower()
+        priority = questionary.text("Habit priority: ").ask().lower()
+        period = questionary.select("Habit Period: ", choices=["Daily", "Weekly"]).ask().lower()
         habit_data = Habit(name, description, priority, period)
         Habit.create_habits(habit_data)
 
@@ -53,4 +53,4 @@ if __name__ == '__main__':
         habit_to_check = data.select_habit()
         choice = questionary.confirm("Are you sure?").ask()
         if choice == "Yes":
-            data.complete_functionality(habit_to_check)
+            pass

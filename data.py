@@ -5,7 +5,7 @@ from datetime import datetime
 
 import questionary
 
-conn = sqlite3.connect("test5.db")
+conn = sqlite3.connect("test6.db")
 cursor = conn.cursor()
 
 def create_table():
@@ -15,7 +15,7 @@ def create_table():
                     name text,
                     description text,
                     priority char,
-                    period int,
+                    period text,
                     startdate text )
             """)
 
@@ -23,15 +23,10 @@ def create_table():
         cursor.execute("""
                 CREATE TABLE IF NOT EXISTS events (
                     name text,
-                    description text,
-                    period int,
                     checked boolean DEFAULT False,
                     streak int DEFAULT 0,
-                    due text,
-                    last_completed text,
-                    FOREIGN KEY (name) REFERENCES habits(name)
-                    FOREIGN KEY (description) REFERENCES habits(description)
-                    FOREIGN KEY (period) REFERENCES habits(period) )
+                    completed text,
+                    FOREIGN KEY (name) REFERENCES habits(name) )
             """)
 
 create_table()
@@ -65,11 +60,11 @@ def get_habits():
          return [i[0] for i in set(habit_names)]
 
 
-def update_events(name, description, period, last_completed, due, checked, streak):
+def update_events(name, checked, streak, completed):
     with conn:
          cursor.execute(
-             "INSERT INTO events VALUES (?, ?, ?, ?, ?, ?, ?)",
-              (name, description, period, last_completed, due, checked, streak))
+             "INSERT INTO events VALUES (?, ?, ?, ?)",
+              (name, checked, streak, completed))
 
 def select_habit():
     habits_list = get_habits()
