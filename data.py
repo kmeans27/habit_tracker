@@ -3,7 +3,6 @@ import sqlite3
 from datetime import datetime
 
 import questionary
-global file
 conn = sqlite3.connect("test6.db")
 cursor = conn.cursor()
 
@@ -42,19 +41,22 @@ def add_habit(name, description, priority, period, startdate):
 
 def remove_habit(habit_name):
     with conn:
-        cursor.execute(f"DELETE FROM habits WHERE name == '{habit_name}'")
+        #cursor.execute(f"DELETE FROM habits WHERE name == '{habit_name}'")
+        cursor.execute("""DELETE FROM habits WHERE name =?""", (habit_name,))
+
     remove_event(habit_name)
 
 
 def remove_event(habit_name):
     with conn:
-        cursor.execute(f"DELETE FROM events WHERE name == '{habit_name}'")
+        #cursor.execute(f"DELETE FROM events WHERE name == '{habit_name}'")
+        cursor.execute("""DELETE FROM events WHERE name =?""", (habit_name,))
 
 
 def get_habits():
     cursor.execute("SELECT name FROM habits")
-    habit_names = cursor.fetchall()
-    return [i[0] for i in set(habit_names)]
+    data = cursor.fetchall()
+    return [i[0].capitalize() for i in set(data)] if len(data) > 0 else None
 
 
 def update_events(name, checked, streak, completed):
@@ -66,8 +68,8 @@ def update_events(name, checked, streak, completed):
 
 def select_habit():
     habits = get_habits()
-    return questionary.select("Select a habit:",
-                              choices=sorted(habits)).ask().lower()
+    return questionary.select("Please Select a Habit",
+                     choices=sorted(habits)).ask().lower()
 
 
 def get_period(habit_name):
@@ -93,5 +95,10 @@ def update_streak(habit_name, streak, completed=None):
         cursor.execute("UPDATE events SET streak = ?, completed = ? WHERE habit = ?",
                        (streak, completed, habit_name))
 
+def get_all_data():
+    cursor.execute("SELECT * FROM habits")
+    result = cursor.fetchall()
+    return result
 
-#remove_habit("now")
+print(get_all_data())
+#remove_habit("time")

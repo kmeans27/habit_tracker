@@ -45,9 +45,7 @@ if __name__ == '__main__':
         print(habit_to_delete)
         choice = questionary.confirm("Are you sure?").ask()
         if choice == "Yes":
-            habit = Habit(habit_to_delete)
-            habit.remove_habits()
-            # data.remove_habit(habit_to_delete)
+            data.remove_habit(habit_to_delete)
 
 
     if navigation == "Check off existing habits":
