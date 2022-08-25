@@ -15,7 +15,6 @@ if __name__ == '__main__':
                                     choices=[
                                         "Check off existing habits",
                                         "Create new habits",
-                                        "Modify existing habits",
                                         "Delete existing habits",
                                         "Analyze habits or streaks",
                                         "Print all active streaks",
@@ -43,8 +42,11 @@ if __name__ == '__main__':
     if navigation == "Delete existing habits":
         habit_to_delete = data.select_habit()
         print(habit_to_delete)
+        data.remove_habit(habit_to_delete)
+        # print(data.get_all_data())
         choice = questionary.confirm("Are you sure?").ask()
         if choice == "Yes":
+            print("Deleting habit")
             data.remove_habit(habit_to_delete)
 
 

@@ -44,7 +44,7 @@ def remove_habit(habit_name):
         #cursor.execute(f"DELETE FROM habits WHERE name == '{habit_name}'")
         cursor.execute("""DELETE FROM habits WHERE name =?""", (habit_name,))
 
-    remove_event(habit_name)
+    #remove_event(habit_name)
 
 
 def remove_event(habit_name):
@@ -54,9 +54,15 @@ def remove_event(habit_name):
 
 
 def get_habits():
-    cursor.execute("SELECT name FROM habits")
-    data = cursor.fetchall()
-    return [i[0].capitalize() for i in set(data)] if len(data) > 0 else None
+    # cursor.execute("SELECT * FROM habits")
+    # print(cursor.fetchall())
+    conn.row_factory = lambda cursor, row: row[0]
+    result = cursor.execute("SELECT name FROM habits").fetchall()
+    return [i[0] for i in result]
+    # cursor.execute("SELECT name FROM habits")
+    # data = cursor.fetchall()
+    # return [i[0] for i in data]
+
 
 
 def update_events(name, checked, streak, completed):
@@ -69,7 +75,7 @@ def update_events(name, checked, streak, completed):
 def select_habit():
     habits = get_habits()
     return questionary.select("Please Select a Habit",
-                     choices=sorted(habits)).ask().lower()
+                     choices=sorted(habits)).ask()
 
 
 def get_period(habit_name):
@@ -100,5 +106,9 @@ def get_all_data():
     result = cursor.fetchall()
     return result
 
-print(get_all_data())
+
+
+
+print(get_habits())
+# print(get_all_data())
 #remove_habit("time")
