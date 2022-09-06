@@ -1,114 +1,112 @@
 import datetime
 import sqlite3
 from datetime import datetime
-
 import questionary
-conn = sqlite3.connect("test6.db")
-cursor = conn.cursor()
 
 
-def create_table():
-    with conn:
-        cursor.execute("""
-                CREATE TABLE IF NOT EXISTS habits (
-                    name text,
-                    description text,
-                    priority char,
-                    period text,
-                    startdate text )
-            """)
+def connect_database(name="new.db"):
+    conn = sqlite3.connect(name)
+    create_tables(conn)
+    return conn
 
-    with conn:
-        cursor.execute("""
-                CREATE TABLE IF NOT EXISTS events (
-                    name text,
-                    checked boolean DEFAULT False,
-                    streak int DEFAULT 0,
-                    completed text,
-                    FOREIGN KEY (name) REFERENCES habits(name) )
-            """)
+def create_tables(conn):
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS habits (
+               name TEXT PRIMARY KEY , 
+               periodicity TEXT,
+               priority TEXT,
+               creation_time TEXT,
+               streak INT,
+               completion_time TEXT   
+           )""")
 
-
-create_table()
-
-
-def add_habit(name, description, priority, period, startdate):
-    with conn:
-        cursor.execute(
-            "INSERT INTO habits VALUES (?, ?, ?, ?, ?)",
-            (name, description, priority, period, startdate))
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS events (
+            name TEXT,
+            completed Boolean,
+            streak INT DEFAULT 0,
+            completion_time TIME,
+            FOREIGN KEY (name) REFERENCES habits(name)
+        )""")
+    conn.commit()
 
 
-def remove_habit(habit_name):
-    with conn:
-        #cursor.execute(f"DELETE FROM habits WHERE name == '{habit_name}'")
-        cursor.execute("""DELETE FROM habits WHERE name =?""", (habit_name,))
-
-    #remove_event(habit_name)
-
-
-def remove_event(habit_name):
-    with conn:
-        #cursor.execute(f"DELETE FROM events WHERE name == '{habit_name}'")
-        cursor.execute("""DELETE FROM events WHERE name =?""", (habit_name,))
+def add_habit(conn, name, periodicity, priority, creation_time, streak, completion_time=None):
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO habits VALUES(?, ?, ?, ?, ?, ?)",
+                    (name, periodicity, priority,
+                    creation_time, streak, completion_time))
+    conn.commit()
 
 
-def get_habits():
-    # cursor.execute("SELECT * FROM habits")
-    # print(cursor.fetchall())
-    conn.row_factory = lambda cursor, row: row[0]
+def remove_habit(conn, habit_name):
+    cursor = conn.cursor()
+    cursor.execute("""DELETE FROM habits WHERE name =?""", (habit_name,))
+    conn.commit()
+    remove_events(conn, habit_name)
+
+def remove_events(conn, habit_name):
+    cursor = conn.cursor()
+    cursor.execute("""DELETE FROM events WHERE name =?""", (habit_name,))
+    conn.commit()
+
+
+def get_habits(conn):
+    cursor = conn.cursor()
     result = cursor.execute("SELECT name FROM habits").fetchall()
     return [i[0] for i in result]
-    # cursor.execute("SELECT name FROM habits")
-    # data = cursor.fetchall()
-    # return [i[0] for i in data]
 
 
-
-def update_events(name, checked, streak, completed):
-    with conn:
-        cursor.execute(
-            "INSERT INTO events VALUES (?, ?, ?, ?)",
-            (name, checked, streak, completed))
-
-
-def select_habit():
-    habits = get_habits()
-    return questionary.select("Please Select a Habit",
-                     choices=sorted(habits)).ask()
+def update_events(conn, name, is_completed, streak, completion_time):
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO events VALUES(?, ?, ?, ?)",
+                    (name, is_completed, streak, completion_time))
+    conn.commit()
 
 
-def get_period(habit_name):
-    cursor.execute("SELECT period FROM habits WHERE name =?", (habit_name,))
-    result = cursor.fetchall()
-    return (result[0][0])
+def get_period(conn, habit_name):
+    cursor = conn.cursor()
+    query = "SELECT periodicity FROM habits WHERE name =?"
+    cursor.execute(query, (habit_name,))
+    data = cursor.fetchall()
+    return data[0][0]
 
 
-def get_completed(habit_name):
-    cursor.execute("SELECT completed FROM events WHERE name=?", (habit_name,))
-    result = cursor.fetchall()
-    return (result[0][0])
+def get_habit_completion_time(conn, habit_name):
+    cursor = conn.cursor()
+    query = "SELECT completion_time FROM habits WHERE name = ?"
+    cursor.execute(query, (habit_name,))
+    data = cursor.fetchall()
+    return data[0][0]
 
 
-def get_streak(habit_name):
-    cursor.execute("SELECT streak FROM events WHERE name =?", (habit_name,))
-    result = cursor.fetchall()
-    return (result[0][0])
+def get_streak_count(conn, habit_name):
+    cursor = conn.cursor()
+    query = "SELECT streak FROM habits WHERE name = ?"
+    cursor.execute(query, (habit_name,))
+    streak_count = cursor.fetchall()
+    return streak_count[0][0]
 
 
-def update_streak(habit_name, streak, completed=None):
-    with conn:
-        cursor.execute("UPDATE events SET streak = ?, completed = ? WHERE habit = ?",
-                       (streak, completed, habit_name))
+def update_habit_streak(conn, habit_name, streak, time=None):
+    cursor = conn.cursor()
+    query = "UPDATE habits SET streak = ?, completion_time = ? WHERE name = ?"
+    data = (streak, time, habit_name)
+    cursor.execute(query, data)
+    conn.commit()
 
-def get_all_data():
+
+def get_all_data(conn):
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM habits")
     result = cursor.fetchall()
     return result
 
 
+def fetch_priority(conn):
+    cursor = conn.cursor()
+    cursor.execute("SELECT priority FROM habits")
+    data = cursor.fetchall()
+    return [i[0] for i in set(data)]
 
-
-print(get_habits())
-# print(get_all_data())
-#remove_habit("time")

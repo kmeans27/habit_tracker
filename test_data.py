@@ -1,13 +1,15 @@
 import unittest
 import data
 
+
 class TestData(unittest.TestCase):
 
-    def test_get_habits(self):
+    def test_add_habits(self):
+        # data.add_habit("Fitness", "Going to the gym every day", "B", "daily", "26/08/2022 13:38")
+        # data.add_habit("Study", "Studying for OOFP", "A", "daily", "26/08/2022 13:43")
         pass
-        # result1 = data.get_habits()
-        # result2 = data.get_all_data()
-        # self.assertEqual(result1, result2)
+
+
 
 
 

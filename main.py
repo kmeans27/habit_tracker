@@ -1,59 +1,60 @@
-import data
-from habit import Habit
-
 import questionary
-from datetime import datetime
+
+import data
+import qt
+from habit import Habit
 
 print("Hello! This APP aims to improve your efficiency and "
       "let’s you manage and analyze your habits with ease. ")
 
-if __name__ == '__main__':
-    # molsou = Habit("justtest", "this is the description", "B", 2)
-    # Habit.create_habits(molsou)
-
-    navigation = questionary.select("Select one of the following:",
-                                    choices=[
-                                        "Check off existing habits",
-                                        "Create new habits",
-                                        "Delete existing habits",
-                                        "Analyze habits or streaks",
-                                        "Print all active streaks",
-                                        "Exit the application"
-                                    ]).ask()
-
-    if navigation == "Exit the application":
-        choice = questionary.confirm("Are you sure?").ask()
-        if choice == "Yes":
-            exit()
-
-    if navigation == "Create new habits":
-        name = questionary.text("Habit name: ").ask().lower()
-        description = questionary.text("Habit description: ").ask().lower()
-        priority = questionary.text("Habit priority: ").ask().lower()
-        period = questionary.select("Habit Period: ", choices=["daily", "weekly"]).ask().lower()
-        habit_data = Habit(name, description, priority, period)
-        Habit.create_habits(habit_data)
-
-    # if navigation == "Delete existing habits":
-    #     print(data.get_habits())
-    #     habit_to_delete = questionary.text("Type habit to delete: ").ask()
-    #     data.remove_habit(habit_to_delete)
-
-    if navigation == "Delete existing habits":
-        habit_to_delete = data.select_habit()
-        print(habit_to_delete)
-        data.remove_habit(habit_to_delete)
-        # print(data.get_all_data())
-        choice = questionary.confirm("Are you sure?").ask()
-        if choice == "Yes":
-            print("Deleting habit")
-            data.remove_habit(habit_to_delete)
+data.connect_database()
 
 
-    if navigation == "Check off existing habits":
-        habit_to_check_off = data.select_habit()
-        choice = questionary.confirm("Are you sure?").ask()
-        if choice == "Yes":
-            habit_data = Habit(habit_to_check_off)
-            Habit.completed(habit_data)
+#  CLI Interface
+def menu():
+    choice = questionary.select(
+        "Select one of the following:",
+        choices=[
+            "Create new Habits",
+            "Delete existing Habits",
+            "Check off existing Habits",
+            "Show Habits (sorted by priority)",
+            "Analytics",
+            "Exit"
+        ]).ask()
 
+    if choice == "Create new Habits":
+        habit_name = qt.habit_name()
+        habit_periodicity = qt.habit_periodicity()
+        habit_priority = qt.habit_priority()
+        habit = Habit(habit_name, habit_periodicity, habit_priority)
+        habit.add()
+
+    if choice == "Delete existing Habits":
+        habit_name = qt.habits_from_conn()
+        print(habit_name)
+        habit = Habit(habit_name)
+        if qt.habit_delete_confirmation(habit_name):
+            habit.remove()
+        else:
+            print("\nHabit not removed!)\n")
+
+    if choice == "Check off existing Habits":
+        habit_name = qt.habits_from_conn()
+        print(habit_name)
+        habit = Habit(habit_name)
+        habit.complete()
+
+    if choice == "Show Habits (sorted by priority)":
+        pass
+
+    if choice == "Analytics":
+        pass
+
+    if choice == "Exit":
+        exit()  # exit() completely exits the program
+
+
+if __name__ == "__main__":
+    while True:
+        menu()

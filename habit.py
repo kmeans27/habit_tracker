@@ -1,69 +1,62 @@
-import sqlite3
-import itertools
-from data import conn
-import datetime
-from datetime import datetime
-
 import data
+from datetime import datetime
 
 
 class Habit:
-
-    def __init__(self, name, description, priority, period ):
+    def __init__(self, name: str = None, periodicity: str = None, priority: str = None):
         self.name = name
-        self.description = description
+        self.periodicity = periodicity
         self.priority = priority
-        self.period = period
-        self.startdate = datetime.now().strftime("%d/%m/%y %H:%M")
-        self.completed = None
-        self.checked = 0
+        self.data = data.connect_database()
+        self.streak = 0
+        self.current_time = datetime.now().strftime("%d/%m/%Y %H:%M")
+        self.completed = False
         self.streak = 0
 
-    def create_habits(self):
-        data.add_habit(self.name, self.description, self.priority, self.period, self.startdate)
-        data.update_events(self.name, self.checked, self.streak, self.completed)
-        print("Habit"+self.name+"successfully added!")
+    def add(self):
+        data.add_habit(self.data, self.name, self.periodicity, self.priority, self.current_time, self.streak)
+        data.update_events(self.data, self.name, self.completed, self.streak, self.current_time)
+        print(f"\n Added habit name:'{self.name}' with periodicity: '{self.periodicity}' "
+                  f"and priority: '{self.priority}' added successful! \n")
 
-    def remove_habits(self):
-        data.remove_habit(self.name)
-        data.remove_event(self.name)
-        print("Habit" + self.name + "successfully removed!")
+    def remove(self):
+        data.remove_habit(self.data, self.name)
+        print(f"\nDeleted: '{self.name}'\n")
 
-    def daily_streak(self):
-        complete = data.get_completed(self.name)
-        streak = data.get_streak(self.name)
-        if streak == 0 or complete is None:
-            return 1
-        else:
-            date = datetime.strptime(self.startdate[:10], "%d/%m/%y") - datetime.strptime(complete[:10], "%d/%m/%y")
-            return date.days
+    def reset_streak(self):
+        self.streak = 1
+        data.update_habit_streak(self.data, self.name, self.streak, self.current_time)
+        data.update_events(self.data, self.name, False, data.get_streak_count(self.data, self.name), self.current_time)
+        print(f"Your streak for Habit: '{self.name}' is now {self.streak}\n")
 
     def increment_streak(self):
-        self.streak = data.get_streak(self.name)
+        self.streak = data.get_streak_count(self.data, self.name)
         self.streak += 1
 
     def update_streak(self):
         self.increment_streak()
-        data.update_streak(self.name, self.streak, self.completed())
-        data.update_events(self.name, True, data.get_streak(self.name), self.completed())
-        print(f"\nUpdated streak for: '{self.name}' is '{self.streak}'")
+        data.update_habit_streak(self.data, self.name, self.streak, self.current_time)
+        data.update_events(self.data, self.name, True, data.get_streak_count(self.data, self.name), self.current_time)
+        print(f"\nYour streak for Habit: '{self.name}' is {self.streak}\n")
 
-    def reset_streak(self):
-        self.streak = 1
-        data.update_streak(self.name, self.streak, self.completed())
-        data.update_events(self.name, True, data.get_streak(self.name), self.completed())
-        print(f"\nStreak for habit: '{self.name}' is reset: '{self.streak}'")
-
-    def completed(self):
-        if data.get_period(self.name) == "daily":
-            if self.daily_streak() == 0:
-                print("\nAlready completed today!")
-            elif self.daily_streak() == 1:
+    def complete(self):
+        if data.get_period(self.data, self.name) == "daily":
+            if self.daily_habit_streak_verification() == 0:
+                print("\nAlready completed today!\n")
+            elif self.daily_habit_streak_verification() == 1:
                 self.update_streak()
             else:
                 self.reset_streak()
 
-
+    def daily_habit_streak_verification(self):
+        last_visit = data.get_habit_completion_time(self.data, self.name)
+        previous_streak = data.get_streak_count(self.data, self.name)
+        if previous_streak == 0 or last_visit is None:
+            return 1
+        else:
+            today = self.current_time
+            date = datetime.strptime(today[:10], "%d/%m/%Y") - datetime.strptime(last_visit[:10], "%d/%m/%Y")
+            return date.days
 
 
 
