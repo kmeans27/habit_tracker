@@ -1,5 +1,5 @@
 import questionary
-
+import analytics
 import data
 import qt
 from habit import Habit
@@ -49,7 +49,40 @@ def menu():
         pass
 
     if choice == "Analytics":
-        pass
+        second_choice = questionary.select(
+            "Choose one of the following",
+            choices=[
+                "View due Habits",
+                "View all currently tracked Habits",
+                "View all Habits with same periodicity",
+                "View Longest Streak",
+                "View Longest Streak of a given Habit"
+            ]).ask()
+
+        if second_choice == "View due Habits":
+            print("\nThe following Habits are currently due:\n")
+            analytics.habit_due()
+
+        if second_choice == "View all currently tracked Habits":
+            print("\nThe following Habits are currently tracked:\n")
+            analytics.currently_tracked()
+
+        if second_choice == "View all Habits with same periodicity":
+            print("\nPlease enter either 'Daily' or 'Weekly' (Weekly is currently not supported)\n")
+            periodicity = questionary.text("Periodicity:").ask().lower()
+            print(periodicity)
+            print("\nThe Habits with the same periodicity are:\n")
+            analytics.same_periodcitiy(periodicity)
+
+        if second_choice == "View Longest Streak":
+            print("\nThe Habit with the longest run streak is:\n")
+            analytics.longest_streak()
+
+        if second_choice == "View Longest Streak of a given Habit":
+            print("\nSelect one of the following Habits:\n")
+            habit_name = qt.habits_from_conn()
+            print(f"You selected the Habit: '{habit_name}'")
+            analytics.given_habit_longest_streak(habit_name)
 
     if choice == "Exit":
         exit()  # exit() completely exits the program
