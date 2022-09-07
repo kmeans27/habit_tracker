@@ -41,21 +41,24 @@ class Habit:
 
     def complete(self):
         if data.get_period(self.data, self.name) == "daily":
-            if self.daily_habit_streak_verification() == 0:
+
+            if self.daily_streak() == 0:
                 print("\nAlready completed today!\n")
-            elif self.daily_habit_streak_verification() == 1:
+            elif self.daily_streak() == 1:
                 self.update_streak()
+
             else:
                 self.reset_streak()
 
-    def daily_habit_streak_verification(self):
-        last_visit = data.get_habit_completion_time(self.data, self.name)
-        previous_streak = data.get_streak_count(self.data, self.name)
-        if previous_streak == 0 or last_visit is None:
+    def daily_streak(self):
+        last = data.get_habit_completion_time(self.data, self.name)
+        old_streak = data.get_streak_count(self.data, self.name)
+        if old_streak == 0 or last is None:
             return 1
+
         else:
             today = self.current_time
-            date = datetime.strptime(today[:10], "%d/%m/%Y") - datetime.strptime(last_visit[:10], "%d/%m/%Y")
+            date = datetime.strptime(today[:10], "%d/%m/%Y") - datetime.strptime(last[:10], "%d/%m/%Y")
             return date.days
 
 

@@ -32,3 +32,9 @@ def given_habit_longest_streak(habit_name):
     query = "SELECT name, MAX(streak) FROM events WHERE name = ?"
     result = cursor.execute(query, (habit_name,)).fetchall()
     print(result)
+
+def sort_priority():
+    conn = connect_database()
+    cursor = conn.cursor()
+    result = cursor.execute("SELECT name, priority FROM habits ORDER BY priority ASC").fetchall()
+    print(result)

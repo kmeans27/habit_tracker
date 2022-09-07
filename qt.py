@@ -1,5 +1,5 @@
 import questionary
-from data import connect_database, fetch_priority, get_habits
+from data import connect_database, get_habits
 
 def habit_name():
     return questionary.text("Habit Name:").ask().lower()
@@ -9,19 +9,15 @@ def habit_periodicity():
                      choices=["Daily", "Weekly"]).ask().lower()
 
 def habit_priority():
-    return questionary.text("Enter a character to Prioritize your Habits").ask().lower()
+    return questionary.text("Prioritizing your Habits is very important! Here is a short tip to help you with that!\n"
+                            "'A' - your most important tasks\n"
+                            "'B' - the next most important tasks\n"
+                            "'C' - a task you could do but does not have any real consequences if you don't do it\n"
+                            "'D' - tasks you can delegate to someone\n"
+                            "'E' - tasks that you don't really have to do\n" 
+                            "Concept from 'Eat that Frog - Brian Tracy'\n"
+                            "\nEnter a character to Prioritize your Habits").ask().lower()
 
-def defined_priority():
-    data = connect_database()
-    arr = fetch_priority(data)
-    return questionary.select("Select a priority",
-                       choices=sorted(arr)).ask().lower()
-
-def priority_delete_confirmation():
-    return questionary.confirm("Are you sure?").ask()
-
-def periodicity_change_confirmed():
-    return questionary.confirm("Are you sure?").ask()
 
 def habits_from_conn():
     conn = connect_database()
@@ -31,16 +27,6 @@ def habits_from_conn():
 
 def habit_delete_confirmation(habit_name_to_delete):
     return questionary.confirm(f"Do you want to delete the habit: '{habit_name_to_delete}'?").ask()
-
-def show_period_choices():
-    choice = questionary.select("Would you like to view all habits or sort habit by periodicity?",
-                       choices=[
-                           "View All Habits",
-                           "View Daily Habits",
-                           "View Weekly Habits",
-                           "Back to Menu"
-                       ]).ask()
-    return choice
 
 
 

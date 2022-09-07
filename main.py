@@ -46,7 +46,8 @@ def menu():
         habit.complete()
 
     if choice == "Show Habits (sorted by priority)":
-        pass
+        print("\nYour currently tracked Habits sorted by priority:\n")
+        analytics.sort_priority()
 
     if choice == "Analytics":
         second_choice = questionary.select(
@@ -83,6 +84,7 @@ def menu():
             habit_name = qt.habits_from_conn()
             print(f"You selected the Habit: '{habit_name}'")
             analytics.given_habit_longest_streak(habit_name)
+
 
     if choice == "Exit":
         exit()  # exit() completely exits the program
