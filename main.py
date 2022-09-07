@@ -12,6 +12,10 @@ data.connect_database()
 
 #  CLI Interface
 def menu():
+    """
+    Used to maintain a loop so the user can do more than one action before the app closes itself.
+    :return:
+    """
     choice = questionary.select(
         "Select one of the following:",
         choices=[
