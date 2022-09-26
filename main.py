@@ -36,7 +36,7 @@ def menu():
 
     if choice == "Delete existing Habits":
         habit_name = qt.habits_from_conn()
-        print(habit_name)
+        print(f"You selected the Habit: '{habit_name}'")
         habit = Habit(habit_name)
         if qt.habit_delete_confirmation(habit_name):
             habit.remove()
@@ -45,7 +45,7 @@ def menu():
 
     if choice == "Check off existing Habits":
         habit_name = qt.habits_from_conn()
-        print(habit_name)
+        print(f"You selected the Habit: '{habit_name}'")
         habit = Habit(habit_name)
         habit.complete()
 
@@ -65,28 +65,29 @@ def menu():
             ]).ask()
 
         if second_choice == "View due Habits":
-            print("\nThe following Habits are currently due:\n")
+            print("\nThe following Habits are currently due:")
             analytics.habit_due()
 
         if second_choice == "View all currently tracked Habits":
-            print("\nThe following Habits are currently tracked:\n")
+            print("\nThe following Habits are currently tracked:")
             analytics.currently_tracked()
 
         if second_choice == "View all Habits with same periodicity":
             print("\nPlease enter either 'Daily' or 'Weekly' (Weekly is currently not supported)\n")
             periodicity = questionary.text("Periodicity:").ask().lower()
-            print(periodicity)
-            print("\nThe Habits with the same periodicity are:\n")
+            print(f"You selected: '{periodicity}'")
+            print("\nThe Habits with the same periodicity are:")
             analytics.same_periodcitiy(periodicity)
 
         if second_choice == "View Longest Streak":
-            print("\nThe Habit with the longest run streak is:\n")
+            print("\nThe Habit with the longest run streak is:")
             analytics.longest_streak()
 
         if second_choice == "View Longest Streak of a given Habit":
             print("\nSelect one of the following Habits:\n")
             habit_name = qt.habits_from_conn()
-            print(f"You selected the Habit: '{habit_name}'")
+            print(f"You selected the Habit: '{habit_name}'\n")
+            # print("\nThe longest Streak from the selected habit is:")
             analytics.given_habit_longest_streak(habit_name)
 
 

@@ -86,6 +86,14 @@ class Habit:
             else:
                 self.reset_streak()
 
+        elif data.get_period(self.data, self.name) == "weekly":
+            if self.weekly_streak() == 1:
+                print("\nAlready completed this week!\n")
+            elif self.weekly_streak() == 2:
+                self.update_streak()
+            else:
+                self.reset_streak()
+
     def daily_streak(self):
         """
         Returns the days between the last completion time of a habit
@@ -100,6 +108,18 @@ class Habit:
             today = self.current_time
             date = datetime.strptime(today[:10], "%d/%m/%Y") - datetime.strptime(last[:10], "%d/%m/%Y")
             return date.days
+
+
+    def weekly_streak(self):
+        last = data.get_habit_completion_time(self.data, self.name)
+        old_streak = data.get_streak_count(self.data, self.name)
+        if  old_streak == 0 or last is None:
+            return 2
+        else:
+            today = self.current_time
+            date = datetime.strptime(today[:10], "%d/%m/%Y") - datetime.strptime(last[:10], "%d/%m/%Y")
+            week = 3 if date.days > 14 else (2 if date.days > 7 else 1)
+            return week
 
 
 
